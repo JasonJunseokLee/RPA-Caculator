@@ -1,6 +1,5 @@
-```typescript
 import React from 'react';
-import * as Slider from '@radix-ui/react-slider';
+import * as SliderPrimitive from '@radix-ui/react-slider';
 
 interface SliderInputProps {
   label: string;

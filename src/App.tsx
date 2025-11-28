@@ -1,6 +1,7 @@
 import { Layout } from './components/layout/Layout';
 import { InputSection } from './components/inputs/InputSection';
 import { KPIGrid } from './components/results/KPIGrid';
+import { CalculationBreakdown } from './components/results/CalculationBreakdown';
 import { ROITrendChart } from './components/charts/ROITrendChart';
 import { MultiYearROIChart } from './components/charts/MultiYearROIChart';
 import { CostTimelineChart } from './components/charts/CostTimelineChart';
@@ -47,6 +48,9 @@ function App() {
             <motion.div className="space-y-6" variants={staggerContainer}>
               <motion.div variants={chartAnimation}>
                 <KPIGrid />
+              </motion.div>
+              <motion.div variants={chartAnimation}>
+                <CalculationBreakdown />
               </motion.div>
               <motion.div variants={chartAnimation}>
                 <WorkloadAnalysisCard />

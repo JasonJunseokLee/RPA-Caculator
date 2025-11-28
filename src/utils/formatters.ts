@@ -12,7 +12,7 @@ export const formatKoreanCurrency = (amount: number): string => {
     return `${value.toFixed(1)}천만원`;
   } else if (amount >= million) {
     const value = amount / million;
-    return `${value.toFixed(0)}백만원`;
+    return `${value.toFixed(1)}백만원`;
   } else {
     return `${amount.toLocaleString()}원`;
   }

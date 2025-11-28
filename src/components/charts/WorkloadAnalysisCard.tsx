@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCalculatorStore } from '../../store/useCalculatorStore';
-import { Users, Clock, Coins, TrendingUp, TrendingDown, AlertCircle, AlertTriangle, Zap } from 'lucide-react';
+import { Users, Clock, Coins, TrendingUp, TrendingDown, AlertCircle, AlertTriangle, Zap, Info } from 'lucide-react';
 import { formatKoreanCurrency } from '../../utils/formatters';
+import { FormulaPopup } from '../FormulaPopup';
 
 export const WorkloadAnalysisCard: React.FC = () => {
   const { results, inputs } = useCalculatorStore();
+  const [isFormulaOpen, setIsFormulaOpen] = useState(false);
 
   const HOURS_PER_YEAR_PER_FTE = 1920;
   const requiredFTE = results.fteEquivalent;
@@ -68,15 +70,57 @@ export const WorkloadAnalysisCard: React.FC = () => {
     },
   ];
 
+  const formulas = [
+    `연간 총 업무 시간 = 연간업무량 × 건당처리시간
+
+계산 과정:
+- 연간업무량: 월간업무량 × 12개월
+- 건당처리시간: 업무 1건 처리에 걸리는 시간 (시간 단위)
+- 연간 총 업무 시간 = 연간업무량 × 건당처리시간`,
+    
+    `필요 인력 (FTE) = 연간총업무시간 / 1,920시간
+
+계산 과정:
+- FTE (Full-Time Equivalent): 정규직 환산 인력
+- 1인당 연간 근무시간: 1,920시간 (주 40시간 × 48주)
+- 필요 인력 = 연간총업무시간 / 1,920시간
+
+현재 투입 인력:
+- 현재 FTE = 인력수 × 활용률
+- 활용률: 해당 업무에 할애하는 시간 비중`,
+    
+    `현재 연간 인건비 = 평균연봉 × 1.12 × 인력수 × 활용률
+
+계산 과정:
+- 평균연봉: 직원 1인당 연간 급여
+- 1.12: 퇴직금 및 복리후생 계수
+- 인력수: 해당 업무에 투입된 직원 수
+- 활용률: 해당 업무에 할애하는 시간 비중 (%)
+
+예시:
+- 연봉 5천만원, 5명, 활용률 60%
+- 인건비 = 50,000,000 × 1.12 × 5 × 0.6 = 168,000,000원`
+  ];
+
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-smooth border border-slate-100">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-slate-900">업무량 분석</h3>
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${statusColor}`}>
-          {statusIcon}
-          <span className="text-sm font-semibold">{statusText}</span>
+    <React.Fragment>
+      <div className="bg-white p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-smooth border border-slate-100">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-slate-900">업무량 분석</h3>
+            <button
+              onClick={() => setIsFormulaOpen(true)}
+              className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors group"
+              aria-label="계산식 보기"
+            >
+              <Info className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            </button>
+          </div>
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${statusColor}`}>
+            {statusIcon}
+            <span className="text-sm font-semibold">{statusText}</span>
+          </div>
         </div>
-      </div>
       
       {/* Key Insights - Bullet Points */}
       <div className="mb-4 p-4 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-slate-200">
@@ -160,6 +204,14 @@ export const WorkloadAnalysisCard: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      <FormulaPopup
+        isOpen={isFormulaOpen}
+        onClose={() => setIsFormulaOpen(false)}
+        title="업무량 분석 계산식"
+        formulas={formulas}
+      />
+    </React.Fragment>
   );
 };

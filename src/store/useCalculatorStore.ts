@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { CalculatorInputs, CalculationResults, ScenarioType, ScaleType, SCENARIO_PRESETS, SCALE_PRESETS } from '../types';
+import { CalculatorInputs, CalculationResults, ScenarioType, SCENARIO_PRESETS } from '../types';
 import { calculateROI } from '../utils/calculator';
 
 interface CalculatorState {
@@ -7,27 +7,26 @@ interface CalculatorState {
   results: CalculationResults;
   activeScenario: ScenarioType;
   
-  setInputValue: (key: keyof CalculatorInputs, value: number | ScaleType) => void;
+  setInputValue: (key: keyof CalculatorInputs, value: number) => void;
   setScenario: (scenario: ScenarioType) => void;
-  setScale: (scale: ScaleType) => void;
+  calculate: () => void;
 }
 
 const INITIAL_INPUTS: CalculatorInputs = {
-  numEmployees: 5,
-  avgSalary: 50000000,
-  annualWorkload: 5000,
-  utilizationRate: 60,
-  errorRate: 8,
+  numEmployees: 1,
+  avgSalary: 40000000,
+  annualWorkload: 6000, // 500 monthly × 12
+  utilizationRate: 100,
+  errorRate: 1,
   avgErrorCost: 10000,
-  processingTime: 0.5,
+  processingTime: 10 / 60, // 10 minutes converted to hours
   
-  scale: 'medium',
-  monthlyLicensePerBot: 1400000,
+  monthlyLicensePerBot: 400000,
   numBots: 3,
-  developmentCost: 24000000,
-  consultingCost: 10000000,
-  automationRate: 50,
-  errorReductionRate: 80,
+  developmentCost: 3000000,
+  consultingCost: 0,
+  automationRate: 100,
+  errorReductionRate: 95,
 };
 
 export const useCalculatorStore = create<CalculatorState>((set, get) => ({
@@ -38,16 +37,9 @@ export const useCalculatorStore = create<CalculatorState>((set, get) => ({
   setInputValue: (key, value) => {
     const currentInputs = get().inputs;
     const newInputs = { ...currentInputs, [key]: value };
-    
-    // If scale changes, update related fields
-    if (key === 'scale') {
-      const scalePreset = SCALE_PRESETS[value as ScaleType];
-      Object.assign(newInputs, scalePreset);
-    }
 
     set({
       inputs: newInputs,
-      results: calculateROI(newInputs),
     });
   },
 
@@ -59,11 +51,13 @@ export const useCalculatorStore = create<CalculatorState>((set, get) => ({
     set({
       activeScenario: scenario,
       inputs: newInputs,
-      results: calculateROI(newInputs),
     });
   },
 
-  setScale: (scale) => {
-    get().setInputValue('scale', scale);
+  calculate: () => {
+    const currentInputs = get().inputs;
+    set({
+      results: calculateROI(currentInputs),
+    });
   },
 }));

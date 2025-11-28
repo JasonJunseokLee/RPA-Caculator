@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useCalculatorStore } from '../../store/useCalculatorStore';
 import { SliderInput } from './SliderInput';
 import { CurrencyInput } from './CurrencyInput';
-import { ScaleType } from '../../types';
-import { Users, Clock, TrendingUp, Wallet, ChevronDown, ChevronUp } from 'lucide-react';
+import { Users, Clock, TrendingUp, Wallet, ChevronDown, ChevronUp, Calculator } from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface AccordionItemProps {
@@ -52,7 +51,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, icon, isOpen, onTo
 };
 
 export const InputSection: React.FC = () => {
-  const { inputs, setInputValue, setScale } = useCalculatorStore();
+  const { inputs, setInputValue, calculate } = useCalculatorStore();
   
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     hr: true,
@@ -160,28 +159,8 @@ export const InputSection: React.FC = () => {
         icon={<Wallet className="w-5 h-5 text-secondary" />}
         isOpen={openSections.investment}
         onToggle={() => toggleSection('investment')}
-        summary={`${inputs.scale === 'small' ? '소규모' : inputs.scale === 'medium' ? '중규모' : '대규모'} 도입`}
+        summary={`봇 ${inputs.numBots}대 / 월 ₩${(inputs.monthlyLicensePerBot/10000).toFixed(0)}만`}
       >
-        {/* Scale Selector */}
-        <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
-          <label className="text-xs font-medium text-slate-500 mb-2 block">도입 규모 프리셋</label>
-          <div className="grid grid-cols-3 gap-2">
-            {(['small', 'medium', 'large'] as ScaleType[]).map((s) => (
-              <button
-                key={s}
-                onClick={() => setScale(s)}
-                className={clsx(
-                  "py-2 px-2 rounded-lg text-xs font-bold capitalize transition-all border",
-                  inputs.scale === s
-                    ? "bg-secondary/10 text-secondary border-secondary"
-                    : "bg-slate-50 text-slate-500 border-transparent hover:bg-slate-100"
-                )}
-              >
-                {s === 'small' ? '소규모' : s === 'medium' ? '중규모' : '대규모'}
-              </button>
-            ))}
-          </div>
-        </div>
 
         <CurrencyInput
           label="봇 1대당 월 라이선스"
@@ -240,6 +219,15 @@ export const InputSection: React.FC = () => {
           description="도입 후 기대되는 오류 감소 효과"
         />
       </AccordionItem>
+
+      {/* Calculate Button */}
+      <button
+        onClick={calculate}
+        className="w-full mt-6 py-4 px-6 bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
+      >
+        <Calculator className="w-6 h-6" />
+        <span>계산하기</span>
+      </button>
     </div>
   );
 };

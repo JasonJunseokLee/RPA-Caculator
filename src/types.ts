@@ -1,5 +1,4 @@
 export type ScenarioType = 'conservative' | 'standard' | 'optimistic';
-export type ScaleType = 'small' | 'medium' | 'large';
 
 export interface CalculatorInputs {
   // Current State
@@ -12,7 +11,6 @@ export interface CalculatorInputs {
   processingTime: number; // Hours per task
 
   // RPA Investment
-  scale: ScaleType;
   monthlyLicensePerBot: number; // Monthly cost per bot
   numBots: number;
   developmentCost: number; // One-time
@@ -47,13 +45,14 @@ export interface CalculationResults {
   total3YearCost: number;
   total3YearSavings: number;
   total3YearProfit: number;
-  roi3Year: number;
   
   // 5 Year Projection
   total5YearCost: number;
   total5YearSavings: number;
   total5YearProfit: number;
-  roi5Year: number;
+  
+  requiredFTE: number;
+  inputFTE: number;
   
   // Monthly Cashflow for Chart
   monthlyCashFlow: {
@@ -76,27 +75,6 @@ export const SCENARIO_PRESETS: Record<ScenarioType, Partial<CalculatorInputs>> =
   optimistic: {
     automationRate: 70,
     errorReductionRate: 90,
-  },
-};
-
-export const SCALE_PRESETS: Record<ScaleType, Partial<CalculatorInputs>> = {
-  small: {
-    monthlyLicensePerBot: 2500000, // ~30M annual / 12 months / 1 bot
-    numBots: 1,
-    developmentCost: 15000000,
-    consultingCost: 5000000,
-  },
-  medium: {
-    monthlyLicensePerBot: 1400000, // ~50M annual / 12 months / 3 bots
-    numBots: 3,
-    developmentCost: 24000000,
-    consultingCost: 10000000,
-  },
-  large: {
-    monthlyLicensePerBot: 1300000, // ~80M annual / 12 months / 5 bots
-    numBots: 5,
-    developmentCost: 36000000,
-    consultingCost: 20000000,
   },
 };
 
